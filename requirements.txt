@@ -1,0 +1,10 @@
+gunicorn
+aiohttp
+aiohttp-debugtoolbar
+aiohttp-jinja2
+aiohttp-session
+aioredis
+jinja2
+peewee
+peewee-async
+aiopg

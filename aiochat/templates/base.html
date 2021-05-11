@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{% block title %}Simple asyncio chat{% endblock %}</title>
+
+    <link href="{{ app.router.static.url_for(filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url_for(filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url_for(filename='sidebar.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url_for(filename='signin.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url_for(filename='chat.css') }}" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="nav-side-menu">
+    <div class="brand">{{ self.title() }}</div>
+    <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+    <div class="menu-list">
+        <ul id="menu-content" class="menu-content collapse out">
+            <li{% if request.match_info._route.name == 'index' %} class="collapsed active"{% endif %}>
+                <a href="{{ app.router['index'].url_for() }}">
+                    <i class="fa fa-home fa-lg"></i> Main page
+                </a>
+            </li>
+            {% if request.user %}
+                <li{% if request.match_info._route.name == 'logout' %} class="collapsed active"{% endif %}>
+                    <a href="{{ app.router['logout'].url_for() }}">
+                        <i class="fa fa-sign-out fa-lg"></i> LogOut from {{ request.user }}
+                    </a>
+                </li>
+                <li data-toggle="collapse" data-target="#rooms" class="collapsed{% if request.path.startswith('/chat') %} active{% endif %}">
+                    <a><i class="fa fa-weixin fa-lg"></i> Chat rooms <span class="arrow"></span></a>
+                </li>
+                <ul class="sub-menu collapse{% if request.path.startswith('/chat') %} in{% endif %}" id="rooms">
+                    <li{% if request.match_info._route.name == 'create_room' %} class="active"{% endif %}>
+                        <a href="{{ app.router['create_room'].url_for() }}">Create new room</a></li>
+                    {% for room in chat_rooms %}
+                        <li{% if request.match_info._route.name == 'room' and request.match_info['slug'] == room.name %} class="active"{% endif %}>
+                            <a href="{{ app.router['room'].url_for(slug=room.name) }}">#{{ room.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <li{% if request.match_info._route.name == 'login' %} class="collapsed active"{% endif %}>
+                    <a href="{{ app.router['login'].url_for() }}">
+                        <i class="fa fa-sign-in fa-lg"></i> LogIn
+                    </a>
+                </li>
+            {% endif %}
+            {#
+            <li>
+                <a href="#">
+                    <i class="fa fa-user fa-lg"></i> Profile
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-users fa-lg"></i> Users
+                </a>
+            </li>
+            #}
+        </ul>
+    </div>
+</div>
+
+<div class="container" id="main">
+    <div class="row">
+        <div class="col-md-12">
+            {% for kind, msg in get_messages(request) %}
+                <div class="alert alert-{{ kind }}" role="alert">
+                    {{ msg }}
+                </div>
+            {% endfor %}
+
+            {% block content %}
+                <h4>This is suppose to be in the main content</h4>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+    <script src="{{ app.router.static.url_for(filename='jquery-3.2.0.min.js') }}"></script>
+    <script src="{{ app.router.static.url_for(filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
