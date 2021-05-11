@@ -1,5 +1,5 @@
 ## Simple aiohttp chat (slack)
-#### Made fo myself
+#### Made for myself
 ### Preparation:
 ```
 pip install -r requirements.txt
